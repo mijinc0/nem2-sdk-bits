@@ -80,6 +80,7 @@ function createSignedLockFundsTx( signedAggregateTx: nem.SignedTransaction ) :ne
   return initiater.sign( lockFundsTx );
 }
 
+
 function announce( tx: nem.SignedTransaction ){
   txHttp.announce( tx ).subscribe(
     res => console.log( `SignedTx [${tx.type}] announced. hash:${tx.hash} , msg:${res.message}` ),
