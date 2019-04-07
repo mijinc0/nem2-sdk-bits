@@ -15,7 +15,7 @@ const txDeadline = Deadline.create();
 const recipientAddr = Address.createFromRawAddress('SC3SWLT6JBIJ23ZHNKFQRCRGQUQ2JJHG7EVUPD45');
 
 // calc modaic id
-const xemMosaicId   = new MosaicId( '4c05b1aaa8cacd34' );
+const xemMosaicId   = new MosaicId( '54a4fc96c8d1c8cb' );
 
 const mosaics       = [ new Mosaic( xemMosaicId , UInt64.fromUint(1000000000) ) ];
 
@@ -33,7 +33,7 @@ const transferTx = TransferTransaction.create(
 
 // sign into tx //
 
-const privKey   = '62340B188B1E9B7D308E8C10954A835DC6414086B575A74117F6C9346DB1FEA2';
+const privKey   = '7AE3E880903F6647C896B2C4B422C0D579805C8A2BD71A2B046822CF9E0A7D20';
 
 const senderAcc = Account.createFromPrivateKey( privKey , netType );
 

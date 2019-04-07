@@ -36,9 +36,6 @@ function sendMosaicToObservedAddr(){
   );
 }
 
-sendMosaicToObservedAddr();
-
-
 // Observe tx with Listener //
 
 const listener = new Listener( url );
@@ -52,3 +49,5 @@ listener.open().then( () => {
   );
 });
 // Listener observe until listener is closed.
+
+sendMosaicToObservedAddr( );

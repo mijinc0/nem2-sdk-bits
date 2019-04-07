@@ -89,8 +89,8 @@ function createSignedLockFundsTx( signedAggregateTx: nem.SignedTransaction ) :ne
   const lockedMosaic = new nem.Mosaic( currencyMosaicId, nem.UInt64.fromUint(10000000) ); // 10,000,000 = 10xem
 
   // If the block height of this tx stored block is 100,
-  // this transaction is invalidated at block height 150.
-  const duration = nem.UInt64.fromUint( 30 );
+  // this transaction is invalidated at block height 150.(when duration = 50)
+  const duration = nem.UInt64.fromUint( 50 );
 
   const lockFundsTx = nem.LockFundsTransaction.create(
     nem.Deadline.create(),
@@ -198,7 +198,6 @@ listener.open().then( () => {
       e  => { console.error( e ); },
     );
 
-  // AggregateTx removed => close listener
   listener.aggregateBondedRemoved( initiater.address ).subscribe(
     txHash => { console.log( `AggregateTx removed. hash:${txHash}` ); },
     e      => { console.error( e ); },

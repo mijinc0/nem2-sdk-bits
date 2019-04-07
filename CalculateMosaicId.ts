@@ -5,7 +5,7 @@ import {
 // calc nemesis modaic id
 const netType = NetworkType.MIJIN_TEST
 
-const nemesisPubKey = '5D0FED1C3FA5A3E3BBB26A84B4A4A5B097FAE3F829FEFED43C5B25C7DE4C7F8D';
+const nemesisPubKey = '238229C30DFBEA7A63B2C49D6A69FFE877A96773797CA244B5EE05DD53466477';
 
 const nemesisAcc    = PublicAccount.createFromPublicKey( nemesisPubKey , netType );
 
