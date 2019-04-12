@@ -25,7 +25,6 @@ Step5. create& send CosignatureTx
 
 **/
 import * as nem from 'nem2-sdk';
-import { filter } from 'rxjs/operators';
 
 const netType = nem.NetworkType.MIJIN_TEST;
 const currencyMosaicId = new nem.MosaicId( '4c05b1aaa8cacd34' );

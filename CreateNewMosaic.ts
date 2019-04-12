@@ -42,6 +42,13 @@ const mosaicDefTx = nem.MosaicDefinitionTransaction.create(
 const signedMosaicDefTx = issuer.sign( mosaicDefTx );
 
 
+// print infomations //
+
+console.log( `issuer public key : ${issuer.publicKey}` );
+console.log( `        mosaic ID : ${mosaicID.toHex()}` );
+console.log( `     mosaic Nonce : ${mosaicNonce.nonce}` );
+
+
 // prepare listener //
 
 const listener = new nem.Listener( url );
