@@ -17,7 +17,7 @@ const recipientAddr = Address.createFromRawAddress('SC3SWLT6JBIJ23ZHNKFQRCRGQUQ2
 // calc modaic id
 const xemMosaicId   = new MosaicId( '54a4fc96c8d1c8cb' );
 
-const mosaics       = [ new Mosaic( xemMosaicId , UInt64.fromUint(100000000) ) ];
+const mosaics = [ new Mosaic( xemMosaicId , UInt64.fromUint(100000000) ) ];
 
 console.log( "mosaic ID : " + xemMosaicId.toHex() );
 
