@@ -1,7 +1,12 @@
 /*
-
 [ usage ]
+  $ ts-node ./AccountObserver.ts << observed address >> << option >>
 
+[ option ]
+  -v : verbose mode ( default:simple )
+
+[ e.g. ]
+  npx ts-node ./AccountObserver.ts SD4MQDCJ6WC6GTGUP2PWFORXZSERFG2UHBU7ZHOQ -v
 */
 
 import * as nem from 'nem2-sdk';
