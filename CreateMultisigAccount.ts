@@ -62,6 +62,8 @@ const signer = Account.createFromPrivateKey( privateKey , netType );
 
 const signedTx = signer.sign( modMulsigAccTx );
 
+console.log(`Tx hash : ${signedTx.hash}`);
+
 // send tx //
 
 const transactionEndpoint = new TransactionHttp( 'http://localhost:3000' );

@@ -39,9 +39,12 @@ const senderAcc = Account.createFromPrivateKey( privKey , netType );
 
 const signedTx  = senderAcc.sign( transferTx );
 
+console.log(`Tx hash : ${signedTx.hash}`);
+
 // send tx //
 
 const transactionEndpoint = new TransactionHttp( 'http://localhost:3000' );
+
 
 transactionEndpoint.announce( signedTx ).subscribe(
   x => console.log( x ),

@@ -182,7 +182,7 @@ class AccountObserver {
     if( verbose ){
       this.setBaseTxInfoIntoCli( txBaseInfo, cli );
       // if needed, print deal info
-      if( transfers.length !== 0 ){ this.setTransferInfoIntoCli( transfers, cli ); }
+      if( transfers.length !== 0 ) this.setTransferInfoIntoCli( transfers, cli );
     }else{
       cli.setLine( `${txBaseInfo.get('height')} ${txBaseInfo.get('type')} ${txBaseInfo.get('hash')}`, false );
     }
@@ -203,6 +203,9 @@ class AccountObserver {
   }
 }
 
+
+
+// region Exec //
 
 function loadOption() :Map<string,string> {
   const optParse = new OptParse();
