@@ -12,12 +12,12 @@ const netType = NetworkType.MIJIN_TEST;
 
 const txDeadline = Deadline.create();
 
-const recipientAddr = Address.createFromRawAddress('SC3SWLT6JBIJ23ZHNKFQRCRGQUQ2JJHG7EVUPD45');
+const recipientAddr = Address.createFromRawAddress('SCPOHZ3BM2WKW2YE4JR6QOYMYXXKKITAAUSSMPQE');
 
 // calc modaic id
 const xemMosaicId   = new MosaicId( '54a4fc96c8d1c8cb' );
 
-const mosaics = [ new Mosaic( xemMosaicId , UInt64.fromUint(100000000) ) ];
+const mosaics = [ new Mosaic( xemMosaicId , UInt64.fromUint(300000000) ) ];
 
 console.log( "mosaic ID : " + xemMosaicId.toHex() );
 
