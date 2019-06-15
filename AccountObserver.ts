@@ -210,7 +210,7 @@ class AccountObserver {
 function loadOption() :Map<string,string> {
   const optParse = new OptParse();
 
-  const addrFinder = ( arg :string ) => { return Util.isBase32( arg ) };
+  const addrFinder = ( arg :string ) => { return Util.isAddressFormat( arg ) };
   optParse.subscribe( 'address', addrFinder );
 
   const verboseFinder = ( arg :string ) => { return (/^-v$/).test( arg ) };

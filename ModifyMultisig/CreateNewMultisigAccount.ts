@@ -1,5 +1,5 @@
 import * as nem from 'nem2-sdk'
-import { TxUtil } from './TxUtil'
+import { TxUtil } from '../share/TxUtil'
 
 /**
            private key: 4E6124BE269BFDB03D929C1D6D00660DE62729C8B018A3563F19A9C5581C40E9

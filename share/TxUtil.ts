@@ -7,14 +7,6 @@ export namespace TxUtil{
 		announce(signedTx, url);
 	}
 
-	function announce( tx: nem.SignedTransaction, url: string ) :void {
-		const txHttp = new nem.TransactionHttp(url);
-		txHttp.announce(tx).subscribe(
-			res => console.log(`SignedTx [${tx.type}] announced. hash:${tx.hash} , msg:${res.message}`),
-			err => console.log(err),
-		);
-	}
-
 	export function sendMultisigTx(
 		cosignatories: nem.Account[],
 		currencyMosaicId: nem.MosaicId,
@@ -28,7 +20,7 @@ export namespace TxUtil{
 
 		const signedMultisigTx  = createSignedMultisigTx(initiater, innerTxs);
 		const signedLockFundsTx = createSignedLockFundsTx(initiater, currencyMosaicId, signedMultisigTx);
-		
+
 		const listener = new nem.Listener(url);
 		listener.open().then(()=>{
 
@@ -42,7 +34,7 @@ export namespace TxUtil{
 				},
 				err => { console.error(`Error\n${err}`) }
 			);
-			
+
   			listener.aggregateBondedAdded(initiater.address).subscribe(
 				tx  => { if(compareTx(tx, signedMultisigTx)) for(let k=0; k<others.length; k++){ createAndAnnounceCosigTx(others[k], tx, url) }; },
 				err => { console.error(err); },
@@ -57,6 +49,14 @@ export namespace TxUtil{
 			// announce and start steps
 			announce(signedLockFundsTx, url);
 		});
+	}
+
+	function announce( tx: nem.SignedTransaction, url: string ) :void {
+		const txHttp = new nem.TransactionHttp(url);
+		txHttp.announce(tx).subscribe(
+			res => console.log(`SignedTx [${tx.type}] announced. hash:${tx.hash} , msg:${res.message}`),
+			err => console.log(err),
+		);
 	}
 
 	function getTxInfos( tx: nem.Transaction ) :string {

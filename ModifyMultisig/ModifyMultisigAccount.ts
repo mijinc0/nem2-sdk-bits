@@ -1,5 +1,5 @@
 import * as nem from 'nem2-sdk'
-import { TxUtil } from './TxUtil'
+import { TxUtil } from '../share/TxUtil'
 
 const url = 'http://localhost:3000';
 const netType = nem.NetworkType.MIJIN_TEST;
