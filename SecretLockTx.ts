@@ -15,8 +15,9 @@ const sender = nem.Account.createFromPrivateKey(privateKey, netType);
 
 const lockedMosaic = new nem.Mosaic(currencyMosaicId, nem.UInt64.fromUint(1000));
 const duration = nem.UInt64.fromUint(100);
-const hashType = nem.HashType.Op_Keccak_256;
-const secret = '9290C506D26276A8BCC82C5A418D4180C41D5BF46FAD7EFFA202DEF7ADE516C7'; // secret should be 32byte-hex
+const hashType = nem.HashType.Op_Sha3_256;
+// 746869734973536563726574 = Sha3_256 => 4f43462ed6eec19fb12dfbd80f7fccaaceb3faaba8c1c169a0b63a6cd0aa3950 
+const secret = '4f43462ed6eec19fb12dfbd80f7fccaaceb3faaba8c1c169a0b63a6cd0aa3950'; // secret should be 32byte-hex
 const recipient = sender.address;
 
 const secretLockTx = nem.SecretLockTransaction.create(
