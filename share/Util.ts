@@ -9,6 +9,10 @@ export module Util {
         return isNaN(decimal) ? 'too big number' : decimal.toString();
     }
 
+    export function isUndefined(obj: any): boolean {
+        return typeof (obj) === 'undefined';
+    }
+
     export function notUndefined(obj: any): boolean {
         return typeof (obj) !== 'undefined';
     }

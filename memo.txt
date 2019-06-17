@@ -1,0 +1,4 @@
+[2度目のdocker-compose upでharvestingがpruneするとき]
+
+｀catapult-service-bootstrap/ruby/lib/catapult/config/catapult_node/template_attributes/per_index.rb｀
+にある ｀CURRENCY_MOSAIC_ID｀ と ｀HARVESTING_MOSAIC_ID｀ の値（ハードコードされた値）を書き換える。

@@ -1,53 +1,36 @@
 // Send transfer tx
+import * as nem from 'nem2-sdk'
+import { TxUtil } from './share/TxUtil'
+import { DefaultOptParse } from './share/OptParse';
 
-import {
-  Account, PublicAccount, Address, Deadline, UInt64, NetworkType,
-  PlainMessage, TransferTransaction, Mosaic, MosaicId,
-  TransactionHttp, MosaicNonce
-} from 'nem2-sdk'
+const option = new DefaultOptParse().parse();
+const senderPrivateKey = option.get('privateKey');
+const recipientAddress = option.get('address');
 
 // create TransferTx //
-
-const netType = NetworkType.MIJIN_TEST;
-
-const txDeadline = Deadline.create();
-
-const recipientAddr = Address.createFromRawAddress('SCPOHZ3BM2WKW2YE4JR6QOYMYXXKKITAAUSSMPQE');
+const netType = nem.NetworkType.MIJIN_TEST;
+const txDeadline = nem.Deadline.create();
+const recipient = nem.Address.createFromRawAddress('SCPOHZ3BM2WKW2YE4JR6QOYMYXXKKITAAUSSMPQE');
 
 // calc modaic id
-const xemMosaicId   = new MosaicId( '54a4fc96c8d1c8cb' );
+const xemMosaicId = new nem.MosaicId('6EEC7FB674DD1DDB');
+const mosaics = [new nem.Mosaic(xemMosaicId, nem.UInt64.fromUint(300000000))];
 
-const mosaics = [ new Mosaic( xemMosaicId , UInt64.fromUint(300000000) ) ];
+console.log("mosaic ID : " + xemMosaicId.toHex());
 
-console.log( "mosaic ID : " + xemMosaicId.toHex() );
+const msg = nem.PlainMessage.create('good luck');
 
-const msg = PlainMessage.create( 'good luck' );
-
-const transferTx = TransferTransaction.create(
-  txDeadline,
-  recipientAddr,
-  mosaics,
-  msg,
-  netType
+const transferTx = nem.TransferTransaction.create(
+    txDeadline,
+    recipient,
+    mosaics,
+    msg,
+    netType
 );
 
-// sign into tx //
+// send tx /
 
-const privKey   = '7AE3E880903F6647C896B2C4B422C0D579805C8A2BD71A2B046822CF9E0A7D20';
+const url = 'http://localhost:3000';
+const senderAccount = nem.Account.createFromPrivateKey(senderPrivateKey, netType);
 
-const senderAcc = Account.createFromPrivateKey( privKey , netType );
-
-const signedTx  = senderAcc.sign( transferTx );
-
-console.log(`Tx hash : ${signedTx.hash}`);
-
-// send tx //
-
-const transactionEndpoint = new TransactionHttp( 'http://localhost:3000' );
-
-
-transactionEndpoint.announce( signedTx ).subscribe(
-  x => console.log( x ),
-  err => console.log( err ),
-  () => console.log("complete")
-);
+TxUtil.sendSinglesigTx(senderAccount, transferTx, url);
