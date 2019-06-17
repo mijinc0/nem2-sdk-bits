@@ -14,7 +14,7 @@ const privateKey = option.get('privateKey');
 const address = option.get('address');
 
 [privateKey, address].forEach(arg => {
-    if (Util.isUndefined(arg)) throw new Error('argument parse fault.');
+    if (Util.isUndefined(arg)) console.error('argument parse fault.');
 });
 
 const modifiedAccount = nem.Account.createFromPrivateKey(privateKey, netType);
