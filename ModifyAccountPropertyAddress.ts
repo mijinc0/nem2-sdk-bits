@@ -1,3 +1,16 @@
+// ** USAGE **
+//
+//    $ ts-node ModifyAccountPropertyAddress.ts <private key> <address> <AllowAccount|BlockAccount> <Add|Remove>
+//
+//    ( All arguments (4 args) are required.)
+//
+//    private key : modified account private key (this script can't deal with multisig )
+//    address : target address
+//    AllowAccount | BlockAccount : PropertyType
+//    Add | Remove : PropertyModificationType
+//
+//    (e.g) $ ts-node ModifyAccountPropertyAddress.ts DA647CF3664CC8D71D96CE567736CE6994049774A1469459CE313BE5B3B09F26 SDT5FPHDF37ZY5LIR3UKD2J4FMO43NQXRTY4U45E AllowAddress Add
+
 import * as nem from 'nem2-sdk';
 import { NemConst } from './share/NemConst'
 import { Util } from './share/Util'
@@ -9,27 +22,41 @@ const currencyMosaicId = new nem.MosaicId(NemConst.CURRENCY_MOSAIC_ID);
 
 const url = 'http://localhost:3000';
 
-const option = new DefaultOptParse().parse();
+const optParse = new DefaultOptParse();
+optParse.subscribe(
+    'propertyType',
+    (arg : string) => { return arg === 'AllowAddress' || arg === 'BlockAddress' },
+    (arg : string) => { return arg === 'AllowAddress' ? `${nem.PropertyType.AllowAddress}` : `${nem.PropertyType.BlockAddress}` }
+);
+optParse.subscribe(
+    'modificationType',
+    (arg : string) => { return arg === 'Add' || arg === 'Remove' },
+    (arg : string) => { return arg === 'Add' ? `${nem.PropertyModificationType.Add}` : `${nem.PropertyModificationType.Remove}` }
+);
+const option = optParse.parse();
+
 const privateKey = option.get('privateKey');
 const address = option.get('address');
+const propertyType = option.get('propertyType'); // propertyType  : base of account property type. AllowAccount or BlockAccount(Deny)
+const modificationType = option.get('modificationType'); // modificationType : modifications in "propertyType". Add or Remove
 
-[privateKey, address].forEach(arg => {
-    if (Util.isUndefined(arg)) console.error('argument parse fault.');
+// argument check
+[privateKeySDT5FPHDF37ZY5LIR3UKD2J4FMO43NQXRTY4U45E, address, propertyType, modificationType].forEach(arg => {
+    if (Util.isUndefined(arg)){
+        console.error(`argument parse fault.`);
+        process.exit(1);
+    }
 });
 
 const modifiedAccount = nem.Account.createFromPrivateKey(privateKey, netType);
 const targetAddress = nem.Address.createFromRawAddress(address);
-
-// propertyType  : base of account property type. Allow or Block(Deny)
-// modifications : modifications in "propertyType"
-const propertyType = nem.PropertyType.BlockAddress;
 const modifications = [
-    nem.AccountPropertyModification.createForAddress(nem.PropertyModificationType.Add, targetAddress)
+    nem.AccountPropertyModification.createForAddress(parseInt(modificationType), targetAddress)
 ];
 
 const modifyAccountPropertyAddressTx = nem.AccountPropertyTransaction.createAddressPropertyModificationTransaction(
     nem.Deadline.create(),
-    propertyType,
+    parseInt(propertyType),
     modifications,
     netType
 );

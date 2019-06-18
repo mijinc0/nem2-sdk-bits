@@ -224,7 +224,7 @@ const url  = 'http://localhost:3000';
 const opt  = loadOption();
 const addr = opt.get( 'address' );
 
-if( Util.notUndefined( addr ) === false ) throw new Error( 'Address Not Found' );
+if( Util.isUndefined( addr ) ) throw new Error( 'Address Not Found' );
 
 const observer = new AccountObserver( addr, url, opt );
 
