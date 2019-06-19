@@ -25,13 +25,13 @@ const url = 'http://localhost:3000';
 const optParse = new DefaultOptParse();
 optParse.subscribe(
     'propertyType',
-    (arg : string) => { return arg === 'AllowAddress' || arg === 'BlockAddress' },
-    (arg : string) => { return arg === 'AllowAddress' ? `${nem.PropertyType.AllowAddress}` : `${nem.PropertyType.BlockAddress}` }
+    (arg: string) => { return arg === 'AllowAddress' || arg === 'BlockAddress' },
+    (arg: string) => { return `${(<any>nem.PropertyType)[arg]}` }
 );
 optParse.subscribe(
     'modificationType',
-    (arg : string) => { return arg === 'Add' || arg === 'Remove' },
-    (arg : string) => { return arg === 'Add' ? `${nem.PropertyModificationType.Add}` : `${nem.PropertyModificationType.Remove}` }
+    (arg: string) => { return arg === 'Add' || arg === 'Remove' },
+    (arg: string) => { return `${(<any>nem.PropertyModificationType)[arg]}` }
 );
 const option = optParse.parse();
 
@@ -42,7 +42,7 @@ const modificationType = option.get('modificationType'); // modificationType : m
 
 // argument check
 [privateKey, address, propertyType, modificationType].forEach(arg => {
-    if (Util.isUndefined(arg)){
+    if (Util.isUndefined(arg)) {
         console.error(`argument parse fault.`);
         process.exit(1);
     }
