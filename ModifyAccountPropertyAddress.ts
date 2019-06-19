@@ -41,7 +41,7 @@ const propertyType = option.get('propertyType'); // propertyType  : base of acco
 const modificationType = option.get('modificationType'); // modificationType : modifications in "propertyType". Add or Remove
 
 // argument check
-[privateKeySDT5FPHDF37ZY5LIR3UKD2J4FMO43NQXRTY4U45E, address, propertyType, modificationType].forEach(arg => {
+[privateKey, address, propertyType, modificationType].forEach(arg => {
     if (Util.isUndefined(arg)){
         console.error(`argument parse fault.`);
         process.exit(1);
