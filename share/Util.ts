@@ -29,6 +29,10 @@ export module Util {
         return (/^[0-9A-Fa-f]+$/).test(s);
     }
 
+    export function notHex(s: string): boolean {
+        return !isHex(s);
+    }
+
     export function isKeyFormat(s: string): boolean {
         return isHex(s) && s.length === 64;
     }

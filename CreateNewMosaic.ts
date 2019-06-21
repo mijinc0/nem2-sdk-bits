@@ -1,99 +1,85 @@
+// ** USAGE **
+// $ ts-node CreateNewMosaic.ts <private key> <duration> <divisibility> <transferable> <supplyMutable> <levyMutable>
+//
+//   [ optional arguments ]
+//     duration      : decimal number (default 100)
+//     divisibility  : prefix "-d" + number (default 0)
+//     transferable  : -t
+//     supplyMutable : -s
+//     levyMutable   : -l
+//
+// (e.g) ts-node CreateNewMosaic.ts <your private key> 1000 -d3 -t -s -l
+
 import * as nem from 'nem2-sdk';
+import { NemConst } from './share/NemConst'
+import { Util } from './share/Util'
+import { TxUtil } from './share/TxUtil'
 import { DefaultOptParse } from './share/OptParse';
 
-const netType = nem.NetworkType.MIJIN_TEST;
-const currencyMosaicId = new nem.MosaicId('6EEC7FB674DD1DDB');
-
-const url = 'http://localhost:3000';
-
-const option = new DefaultOptParse().parse();
+const netType = NemConst.NETWORK_TYPE;
+const optParse = new DefaultOptParse();
+optParse.subscribe(
+    'duration',
+    (arg: string) => { return (/^\d*$/).test(arg) }
+);
+optParse.subscribe(
+    'divisibility',
+    (arg: string) => { return (/^-d\d{1}$/).test(arg) },
+    (arg: string) => { return arg.slice(2, 3) }
+);
+optParse.subscribe(
+    'transferable',
+    (arg: string) => { return arg === '-t' }
+);
+optParse.subscribe(
+    'supplyMutable',
+    (arg: string) => { return arg === '-s' }
+);
+optParse.subscribe(
+    'levyMutable',
+    (arg: string) => { return arg === '-l' }
+);
+const option = optParse.parse();
 const privateKey = option.get('privateKey');
 const issuer = nem.Account.createFromPrivateKey(privateKey, netType);
 
-// create properties //
+const duration = option.get('duration') ? parseInt(option.get('duration')) : 100;
+const divisibility = option.get('divisibility') ? parseInt(option.get('divisibility')) : 0;
+const transferable = option.get('transferable') ? true : false;
+const supplyMutable = option.get('supplyMutable') ? true : false;
+const levyMutable = option.get('levyMutable') ? true : false;
 
+// create properties //
 const properties = nem.MosaicProperties.create({
-    duration: nem.UInt64.fromUint(1000),
-    divisibility: 0,
-    transferable: true,
-    supplyMutable: false,
-    levyMutable: false,
+    duration: nem.UInt64.fromUint(duration),
+    divisibility: divisibility,
+    transferable: transferable,
+    supplyMutable: supplyMutable,
+    levyMutable: levyMutable,
 });
 
-
-// create tx //
-
-const txDeadline = nem.Deadline.create();
-
-const mosaicNonce = nem.MosaicNonce.createRandom();
 // If you want to decide nonce => nem.MosaicNonce.createFromHex( '00000000' );
-
+const mosaicNonce = nem.MosaicNonce.createRandom();
 const mosaicID = nem.MosaicId.createFromNonce(mosaicNonce, issuer.publicAccount);
 
 const mosaicDefTx = nem.MosaicDefinitionTransaction.create(
-    txDeadline,
+    nem.Deadline.create(),
     mosaicNonce,
     mosaicID,
     properties,
     netType,
 );
 
-const signedMosaicDefTx = issuer.sign(mosaicDefTx);
-
-
 // print infomations //
 
 console.log(`issuer public key : ${issuer.publicKey}`);
 console.log(`        mosaic ID : ${mosaicID.toHex()}`);
 console.log(`     mosaic Nonce : ${mosaicNonce.nonce}`);
+console.log('[mosaic feature]');
+console.log(`         duration : ${duration}`)
+console.log(`     divisibility : ${divisibility}`)
+console.log(`     transferable : ${transferable}`)
+console.log(`    supplyMutable : ${supplyMutable}`)
+console.log(`      levyMutable : ${levyMutable}`)
 
-
-// prepare listener //
-
-const listener = new nem.Listener(url);
-const mosaicHttp = new nem.MosaicHttp(url);
-
-function getTxInfos(tx: nem.Transaction): string {
-    const txHash = tx.transactionInfo !== undefined ? tx.transactionInfo.hash : 'unknown';
-    const height = tx.transactionInfo !== undefined ? tx.transactionInfo.height.lower : 'unknown';
-    return `type:${tx.type}, hash:${txHash}, height:${height}`
-}
-
-function compareTx(tx: nem.Transaction, signedTx: nem.SignedTransaction): boolean {
-    return tx.transactionInfo !== undefined && tx.transactionInfo.hash === signedTx.hash;
-}
-
-function printMosaicDefinedHeight(when: string) {
-    mosaicHttp.getMosaic(mosaicID).subscribe(
-        info => { console.log(`Check mosic [${when}] ID:${mosaicID.toHex()} height:${info.height.toHex()}`); },
-        e => { console.log(`Check mosic [${when}] Undefined`); },
-    );
-}
-
-listener.open().then(() => {
-    listener
-        .confirmed(issuer.address)
-        .subscribe(
-            tx => {
-                console.log(`Tx confirmed. ${getTxInfos(tx)}`);
-                if (compareTx(tx, signedMosaicDefTx)) {
-                    printMosaicDefinedHeight('after');
-                    listener.close();
-                }
-            },
-            e => { console.error(e); },
-    );
-});
-
-
-// announce tx //
-
-// print before state => expect undefined
-printMosaicDefinedHeight('before');
-
-const txHttp = new nem.TransactionHttp(url);
-
-txHttp.announce(signedMosaicDefTx).subscribe(
-    res => console.log(`Announce Tx. msg:${res.message}`),
-    err => console.error(err),
-);
+TxUtil.sendSinglesigTx(issuer, mosaicDefTx, NemConst.URL);

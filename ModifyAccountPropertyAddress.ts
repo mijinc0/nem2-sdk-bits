@@ -9,7 +9,7 @@
 //    AllowAccount | BlockAccount : PropertyType
 //    Add | Remove : PropertyModificationType
 //
-//    (e.g) $ ts-node ModifyAccountPropertyAddress.ts DA647CF3664CC8D71D96CE567736CE6994049774A1469459CE313BE5B3B09F26 SDT5FPHDF37ZY5LIR3UKD2J4FMO43NQXRTY4U45E AllowAddress Add
+//    (e.g) $ ts-node ModifyAccountPropertyAddress.ts <your private key> SDT5FPHDF37ZY5LIR3UKD2J4FMO43NQXRTY4U45E AllowAddress Add
 
 import * as nem from 'nem2-sdk';
 import { NemConst } from './share/NemConst'
