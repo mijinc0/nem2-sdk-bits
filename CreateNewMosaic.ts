@@ -4,9 +4,9 @@
 //   [ optional arguments ]
 //     duration      : decimal number (default 100)
 //     divisibility  : prefix "-d" + number (default 0)
-//     transferable  : -t
-//     supplyMutable : -s
-//     levyMutable   : -l
+//     transferable  : -t (default false)
+//     supplyMutable : -s (defailt false)
+//     levyMutable   : -l (defailt false)
 //
 // (e.g) ts-node CreateNewMosaic.ts <your private key> 1000 -d3 -t -s -l
 
