@@ -10,27 +10,29 @@ import * as nem from 'nem2-sdk';
 import { NemConst } from './share/NemConst'
 import { Util } from './share/Util'
 import { TxUtil } from './share/TxUtil'
-import { DefaultOptParse } from './share/OptParse';
+import { DefaultOptParse } from './share/DefaultOptParse';
 
 const netType = nem.NetworkType.MIJIN_TEST;
 const currencyMosaicId = new nem.MosaicId(NemConst.CURRENCY_MOSAIC_ID);
 
-const url = 'http://localhost:3000';
-
 const optParse = new DefaultOptParse();
+optParse.subscribePrivateKey();
 optParse.subscribe(
     'propertyType',
     (arg: string) => { return arg === 'AllowMosaic' || arg === 'BlockMosaic' },
+    true,
     (arg: string) => { return `${(<any>nem.PropertyType)[arg]}` }
 );
 optParse.subscribe(
     'modificationType',
     (arg: string) => { return arg === 'Add' || arg === 'Remove' },
+    true,
     (arg: string) => { return `${(<any>nem.PropertyModificationType)[arg]}` }
 );
 optParse.subscribe(
     'mosaicId',
-    (arg: string) => { return Util.isHex(arg) && arg.length === 16 }
+    (arg: string) => { return Util.isHex(arg) && arg.length === 16 },
+    true
 );
 const option = optParse.parse();
 
@@ -60,4 +62,4 @@ const modifyAccountPropertyAddressTx = nem.AccountPropertyTransaction.createMosa
     netType
 );
 
-TxUtil.sendSinglesigTx(modifiedAccount, modifyAccountPropertyAddressTx, url);
+TxUtil.sendSinglesigTx(modifiedAccount, modifyAccountPropertyAddressTx, option.get('url'));

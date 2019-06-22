@@ -14,22 +14,24 @@ import * as nem from 'nem2-sdk';
 import { NemConst } from './share/NemConst'
 import { Util } from './share/Util'
 import { TxUtil } from './share/TxUtil'
-import { DefaultOptParse } from './share/OptParse';
+import { DefaultOptParse } from './share/DefaultOptParse';
 
 const netType = NemConst.NETWORK_TYPE;
 const optParse = new DefaultOptParse();
+optParse.subscribePrivateKey();
 optParse.subscribe(
     'duration',
-    (arg: string) => { return (/^\d*$/).test(arg) }
+    (arg: string) => { return (/^\d*$/).test(arg) },
 );
 optParse.subscribe(
     'divisibility',
     (arg: string) => { return (/^-d\d{1}$/).test(arg) },
-    (arg: string) => { return arg.slice(2, 3) }
+    false,
+    (arg: string) => { return arg.slice(2, 3) },
 );
 optParse.subscribe(
     'transferable',
-    (arg: string) => { return arg === '-t' }
+    (arg: string) => { return arg === '-t' },
 );
 optParse.subscribe(
     'supplyMutable',
@@ -82,4 +84,4 @@ console.log(`     transferable : ${transferable}`)
 console.log(`    supplyMutable : ${supplyMutable}`)
 console.log(`      levyMutable : ${levyMutable}`)
 
-TxUtil.sendSinglesigTx(issuer, mosaicDefTx, NemConst.URL);
+TxUtil.sendSinglesigTx(issuer, mosaicDefTx, option.get('url'));

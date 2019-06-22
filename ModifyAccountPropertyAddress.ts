@@ -15,22 +15,24 @@ import * as nem from 'nem2-sdk';
 import { NemConst } from './share/NemConst'
 import { Util } from './share/Util'
 import { TxUtil } from './share/TxUtil'
-import { DefaultOptParse } from './share/OptParse';
+import { DefaultOptParse } from './share/DefaultOptParse';
 
 const netType = nem.NetworkType.MIJIN_TEST;
 const currencyMosaicId = new nem.MosaicId(NemConst.CURRENCY_MOSAIC_ID);
 
-const url = 'http://localhost:3000';
-
 const optParse = new DefaultOptParse();
+optParse.subscribePrivateKey();
+optParse.subscribeAddress();
 optParse.subscribe(
     'propertyType',
     (arg: string) => { return arg === 'AllowAddress' || arg === 'BlockAddress' },
+    true,
     (arg: string) => { return `${(<any>nem.PropertyType)[arg]}` }
 );
 optParse.subscribe(
     'modificationType',
     (arg: string) => { return arg === 'Add' || arg === 'Remove' },
+    true,
     (arg: string) => { return `${(<any>nem.PropertyModificationType)[arg]}` }
 );
 const option = optParse.parse();
@@ -39,14 +41,6 @@ const privateKey = option.get('privateKey');
 const address = option.get('address');
 const propertyType = option.get('propertyType'); // propertyType  : base of account property type. AllowAccount or BlockAccount(Deny)
 const modificationType = option.get('modificationType'); // modificationType : modifications in "propertyType". Add or Remove
-
-// argument check
-[privateKey, address, propertyType, modificationType].forEach(arg => {
-    if (Util.isUndefined(arg)) {
-        console.error(`argument parse fault.`);
-        process.exit(1);
-    }
-});
 
 const modifiedAccount = nem.Account.createFromPrivateKey(privateKey, netType);
 const targetAddress = nem.Address.createFromRawAddress(address);
@@ -61,4 +55,4 @@ const modifyAccountPropertyAddressTx = nem.AccountPropertyTransaction.createAddr
     netType
 );
 
-TxUtil.sendSinglesigTx(modifiedAccount, modifyAccountPropertyAddressTx, url);
+TxUtil.sendSinglesigTx(modifiedAccount, modifyAccountPropertyAddressTx, option.get('url'));

@@ -1,18 +1,26 @@
 import * as nem from 'nem2-sdk';
 import { TxUtil } from './share/TxUtil'
-import { DefaultOptParse } from './share/OptParse';
+import { NemConst } from './share/NemConst'
+import { DefaultOptParse } from './share/DefaultOptParse';
 
-const netType = nem.NetworkType.MIJIN_TEST;
-const currencyMosaicId = new nem.MosaicId('6EEC7FB674DD1DDB');
+const netType = NemConst.NETWORK_TYPE;
+const currencyMosaicId = new nem.MosaicId(NemConst.CURRENCY_MOSAIC_ID);
 
-const url = 'http://localhost:3000';
+const optParse = new DefaultOptParse();
+optParse.subscribePrivateKey();
+optParse.subscribe(
+    'namespace',
+    (arg:string) => { return (/^\w+:\w+$/).test(arg) },
+    true
+);
+const option = optParse.parse();
 
-const option = new DefaultOptParse().parse();
 const privateKey = option.get('privateKey');
 const issuer = nem.Account.createFromPrivateKey(privateKey, netType);
 
-const subNamespaceName = 'dragon';
-const parentNamespaceName = 'cowcow';
+const namespace = option.get('namespace').split(':');
+const parentNamespaceName = namespace[0];
+const subNamespaceName = namespace[1];
 
 const registerNamespaceTx = nem.RegisterNamespaceTransaction.createSubNamespace(
     nem.Deadline.create(),
@@ -21,4 +29,4 @@ const registerNamespaceTx = nem.RegisterNamespaceTransaction.createSubNamespace(
     netType
 );
 
-TxUtil.sendSinglesigTx(issuer, registerNamespaceTx, url);
+TxUtil.sendSinglesigTx(issuer, registerNamespaceTx, option.get('url'));
