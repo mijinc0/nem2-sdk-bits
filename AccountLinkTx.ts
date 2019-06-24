@@ -1,3 +1,14 @@
+// ** USAGE **
+//    link account to remote(delegate) harvesting
+//
+//    $ ts-node AddressAliasTx.ts <private key> <remote account key> <linkAction>
+//
+//             address : address
+//    remoteAccountKey : '-k' + publickey(hex)
+//     aliasActionType : Link or Unlink
+//
+//    $ ts-node AccountLinkTx.ts <your private key> Link -k7E45327CEE119F03176B8C477C81A90DD05601097F8A74432CB1EF30AC331EFB
+
 import * as nem from 'nem2-sdk';
 import { NemConst } from './share/NemConst'
 import { Util } from './share/Util'
