@@ -13,7 +13,6 @@ import { TxUtil } from './share/TxUtil'
 import { DefaultOptParse } from './share/DefaultOptParse';
 
 const netType = nem.NetworkType.MIJIN_TEST;
-const currencyMosaicId = new nem.MosaicId(NemConst.CURRENCY_MOSAIC_ID);
 
 const optParse = new DefaultOptParse();
 optParse.subscribePrivateKey();
@@ -40,14 +39,6 @@ const privateKey = option.get('privateKey');
 const propertyType = option.get('propertyType');
 const modificationType = option.get('modificationType');
 const hexMosaicId = option.get('mosaicId');
-
-// argument check
-[privateKey, propertyType, modificationType, hexMosaicId].forEach(arg => {
-    if (Util.isUndefined(arg)) {
-        console.error(`argument parse fault.`);
-        process.exit(1);
-    }
-});
 
 const modifiedAccount  = nem.Account.createFromPrivateKey(privateKey, netType);
 const modifiedMosaicId = new nem.MosaicId(hexMosaicId);

@@ -20,7 +20,6 @@ import { TxUtil } from './share/TxUtil'
 import { DefaultOptParse } from './share/DefaultOptParse';
 
 const netType = nem.NetworkType.MIJIN_TEST;
-const currencyMosaicId = new nem.MosaicId(NemConst.CURRENCY_MOSAIC_ID);
 
 const optParse = new DefaultOptParse();
 optParse.subscribePrivateKey();

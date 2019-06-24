@@ -1,13 +1,13 @@
 // ** USAGE **
 //    Link moaicId to Namespace
 //
-//    $ ts-node MosaicAliasTx.ts <private key> <mosaic ID> <namespace ID> <aliasActionType>
+//    $ ts-node AddressAliasTx.ts <private key> <address> <namespace ID> <aliasActionType>
 //
-//          mosaic ID : '-m' + <hex mosaic ID>
+//            address : address
 //       namespace ID : '-n' + <hex namespace ID>
 //    aliasActionType : Link or Unlink
 //
-//    $ ts-node MosaicAliasTx.ts <your private key> -m723bf76f4eeccab2 -n109f4a8fc8c83695 Link
+//    $ ts-node MosaicAliasTx.ts <your private key> SCGFCKHZBHXZF53JC5LK22EC2WCOKM47DIS5FBH2 -n109f4a8fc8c83695 Link
 
 import * as nem from 'nem2-sdk';
 import { NemConst } from './share/NemConst'
@@ -19,6 +19,7 @@ const netType = NemConst.NETWORK_TYPE;
 
 const optParse = new DefaultOptParse();
 optParse.subscribePrivateKey();
+optParse.subscribeAddress();
 optParse.subscribe(
     'aliasActionType',
     (arg: string) => { return arg === 'Link' || arg === 'Unlink' },
@@ -31,33 +32,23 @@ optParse.subscribe(
     true,
     (arg: string) => { return arg.slice(2) }
 );
-optParse.subscribe(
-    'mosaicId',
-    (arg: string) => { return (/^-m[0-9A-Fa-f]{16}$/).test(arg) },
-    true,
-    (arg: string) => { return arg.slice(2) }
-);
 const option = optParse.parse();
 
-const privateKey = option.get('privateKey');
+const sender = nem.Account.createFromPrivateKey(option.get('privateKey'), netType);
+const address = nem.Address.createFromRawAddress(option.get('address'));
 const aliasActionType = option.get('aliasActionType');
 const namespaceName = option.get('namespaceName');
-const mosaicId = option.get('mosaicId');
 
-const sender = nem.Account.createFromPrivateKey(privateKey, netType);
-
-const mosaicAliasTx = nem.MosaicAliasTransaction.create(
+const addressAliasTx = nem.AddressAliasTransaction.create(
     nem.Deadline.create(),
     parseInt(aliasActionType),
     new nem.NamespaceId(namespaceName),
-    new nem.MosaicId(mosaicId),
+    address,
     netType
 );
 
-console.log(`mosaic ID : ${mosaicId}`);
+console.log(`  address : ${address.plain()}`);
 console.log(`namespace : ${namespaceName}`);
 console.log(`   action : ${nem.AliasActionType[parseInt(aliasActionType)]}`);
 
-const url = option.get('url');
-
-TxUtil.sendSinglesigTx(sender, mosaicAliasTx, url);
+TxUtil.sendSinglesigTx(sender, addressAliasTx, option.get('url'));
