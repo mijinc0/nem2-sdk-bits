@@ -1,13 +1,13 @@
 // ** USAGE **
 //    Link moaicId to Namespace
 //
-//    $ ts-node MosaicAliasTx.ts <private key> <mosaic ID> <namespace ID> <aliasActionType>
+//    $ ts-node MosaicAliasTx.ts <private key> <mosaic ID> <namespace name> <aliasActionType>
 //
 //          mosaic ID : '-m' + <hex mosaic ID>
-//       namespace ID : '-n' + <hex namespace ID>
+//       namespace ID : '-n' + <hex namespace name>
 //    aliasActionType : Link or Unlink
 //
-//    $ ts-node MosaicAliasTx.ts <your private key> -m723bf76f4eeccab2 -n109f4a8fc8c83695 Link
+//    $ ts-node MosaicAliasTx.ts <your private key> -m723bf76f4eeccab2 -ndragon Link
 
 import * as nem from 'nem2-sdk';
 import { NemConst } from './share/NemConst'

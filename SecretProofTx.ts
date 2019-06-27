@@ -20,6 +20,7 @@ const currencyMosaicId = new nem.MosaicId(NemConst.CURRENCY_MOSAIC_ID);
 
 const optParse = new DefaultOptParse();
 optParse.subscribePrivateKey();
+optParse.subscribeAddress();
 // optParse.subscribeAddress();
 optParse.subscribe(
     'hashType',
@@ -48,6 +49,7 @@ const secret = option.get('secret');
 // const recipient = nem.Address.createFromRawAddress(option.get('address'));
 // thisIsSecret = ascii => 746869734973536563726574
 const proof = option.get('proof'); // proof length should be 10-1000 byte
+const recipient = nem.Address.createFromRawAddress(option.get('address'));;
 
 console.log(option.get('hashType'));
 console.log(secret);
@@ -57,6 +59,7 @@ const secretProofTx = nem.SecretProofTransaction.create(
     nem.Deadline.create(),
     nem.HashType.Op_Sha3_256,
     secret,
+    recipient,
     proof,
     netType
 );

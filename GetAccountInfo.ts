@@ -1,10 +1,13 @@
-import { Account , Address , AccountHttp , NetworkType } from 'nem2-sdk'
+import * as nem from 'nem2-sdk'
+import { NemConst } from './share/NemConst'
+import { DefaultOptParse } from './share/DefaultOptParse';
 
-const endpoint = new AccountHttp( 'http://localhost:3000' );
-
-const address = Address.createFromRawAddress( 'SDZ2XARR6INLRAA2AYUP3RAOJ6RCKTZCQEV3GTKJ' )
-
-endpoint.getAccountInfo( address ).subscribe(
-  x => console.log( x ),
-  err => console.log( err ),
+const optParse = new DefaultOptParse();
+optParse.subscribeAddress();
+const option = optParse.parse();
+const endpoint = new nem.AccountHttp(option.get('url'));
+const address = nem.Address.createFromRawAddress(option.get('address'))
+endpoint.getAccountInfo(address).subscribe(
+    x => console.log(x),
+    err => console.log(err),
 );

@@ -1,74 +1,63 @@
-// change nomal account into multisig account
-// You should send ModifyMultisigAccountTransaction to change.
+import * as nem from 'nem2-sdk';
+import { NemConst } from './share/NemConst'
+import { Util } from './share/Util'
+import { TxUtil } from './share/TxUtil'
+import { DefaultOptParse } from './share/DefaultOptParse';
 
-import{
-  NetworkType, TransactionHttp, ModifyMultisigAccountTransaction,
-  Deadline, UInt64, MultisigCosignatoryModification, PublicAccount,
-  TransactionInfo, Account, MultisigCosignatoryModificationType,
-} from 'nem2-sdk'
+const netType = nem.NetworkType.MIJIN_TEST;
 
-// create ModifyMultisigAccountTransaction //
+const optParse = new DefaultOptParse();
+optParse.subscribePrivateKey();
+// <publicKey>:<publicKey>:<publicKey>...
+optParse.subscribe(
+    'cosignatoryPrivateKeys',
+    (arg: string) => { return (/^-c[0-9A-Fa-f]{64}(:[0-9A-Fa-f]{64})*$/).test(arg) },
+    true,
+    (arg: string) => { return arg.slice(2) }
+);
+optParse.subscribe(
+    'minApprovalDelta',
+    (arg: string) => { return (/^-a(-|\+)\d+$/).test(arg) },
+    true,
+    (arg: string) => { return arg.slice(2) }
+);
+optParse.subscribe(
+    'minRemovalDelta',
+    (arg: string) => { return (/^-r(-|\+)\d+$/).test(arg) },
+    true,
+    (arg: string) => { return arg.slice(2) }
+);
+const option = optParse.parse();
 
-function createModifications( publicKeys: string[] , modType: MultisigCosignatoryModificationType , netType: NetworkType ) :MultisigCosignatoryModification[] {
+const cosignatories = option.get('cosignatoryPrivateKeys').split(':').map(key => {
+    return nem.Account.createFromPrivateKey(key, netType);
+});
 
-  return publicKeys.map( ( pk )=>{
-    return new MultisigCosignatoryModification(
-      modType,
-      PublicAccount.createFromPublicKey( pk , netType ),
-    );
-  });
-}
+const modifications = cosignatories.map(account => {
+    return new nem.MultisigCosignatoryModification(nem.MultisigCosignatoryModificationType.Add, account.publicAccount);
+});
 
-const netType = NetworkType.MIJIN_TEST;
-
-const version = 3;
-
-const txDeadline = Deadline.create();
-
-const minApprovalDelta = 1;
-
-const minRemovalDelta = 1;
-
-// private: ADC9E162513CAF0E889E02BCE05A3F17EB99CEF5D80AC4B0C8DB04E861A66835
-// public: C5184722F48D445B0CA3282BCD753117306FFA96FB6CBA69217A5F228665D91A
-// address: SC3SWLT6JBIJ23ZHNKFQRCRGQUQ2JJHG7EVUPD45
-
-// private: 8DFBA3B10FEAC9E637851303BCB7FADA2C422EECFBDD9339406419E023899F23
-// public: B21996BB15E10C6B63E24F5B7DA3B4170A6C717B29EB7C5655543AC800296BE7
-// address: SCPS7HCQJNNPNC62BHSHKO4LJFC7MQU5DKX2HBRX
-const cosignatoryPublicKeys = [
-  'C5184722F48D445B0CA3282BCD753117306FFA96FB6CBA69217A5F228665D91A',
-  'B21996BB15E10C6B63E24F5B7DA3B4170A6C717B29EB7C5655543AC800296BE7',
-];
-
-const modifications = createModifications( cosignatoryPublicKeys , MultisigCosignatoryModificationType.Add , netType );
-
-const modMulsigAccTx = ModifyMultisigAccountTransaction.create(
-  txDeadline,
-  minApprovalDelta,
-  minRemovalDelta,
-  modifications,
-  netType,
+const modifyMultisigAccountTx = nem.ModifyMultisigAccountTransaction.create(
+    nem.Deadline.create(),
+    parseInt(option.get('minApprovalDelta')),
+    parseInt(option.get('minRemovalDelta')),
+    modifications,
+    netType
 );
 
-// sign into tx //
+const modifiedAccount = nem.Account.createFromPrivateKey(option.get('privateKey'), netType);
 
-// private: 62340B188B1E9B7D308E8C10954A835DC6414086B575A74117F6C9346DB1FEA2
-// public: 3E2DD86CE1DD2800C22D0C02087C35570314B2ECFAB0DDC91AB65F98B98DFFD5
-// address: SDPOMSYDWAJYPGZAXPLRUDFVJTDVEH26UDRGGNCW
-const privateKey = '62340B188B1E9B7D308E8C10954A835DC6414086B575A74117F6C9346DB1FEA2';
+console.log(`account : ${modifiedAccount.address.plain()}`);
+console.log(`minApprovalDelta : ${option.get('minApprovalDelta')}`);
+console.log(`minRemovalDelta  : ${option.get('minRemovalDelta')}`);
+console.log(`cosignatories : (${cosignatories.length})`);
+cosignatories.forEach( cosignatory => {
+    console.log(`    ${cosignatory.publicKey}`);
+});
 
-const signer = Account.createFromPrivateKey( privateKey , netType );
-
-const signedTx = signer.sign( modMulsigAccTx );
-
-console.log(`Tx hash : ${signedTx.hash}`);
-
-// send tx //
-
-const transactionEndpoint = new TransactionHttp( 'http://localhost:3000' );
-
-transactionEndpoint.announce( signedTx ).subscribe(
-  x => console.log( x ),
-  err => console.log( err ),
+TxUtil.sendMultisigTx(
+    modifiedAccount,
+    cosignatories,
+    [modifyMultisigAccountTx.toAggregate(modifiedAccount.publicAccount)],
+    option.get('url')
 );

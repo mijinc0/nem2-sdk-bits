@@ -1,10 +1,10 @@
 // ** USAGE **
 // $ ts-node CreateNewRootNamespace.ts <private key> <namespace name> <duration>
 //
-// namespace name : required
+// namespace name : '-n' + name
 //       duration : optional (default 100)
 //
-// (e.g) ts-node CreateNewRootNamespace.ts <your private key> mynamespace 1000
+// (e.g) ts-node CreateNewRootNamespace.ts <your private key> -nmynamespace 1000
 
 import * as nem from 'nem2-sdk';
 import { NemConst } from './share/NemConst'
