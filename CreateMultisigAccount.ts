@@ -51,13 +51,12 @@ console.log(`account : ${modifiedAccount.address.plain()}`);
 console.log(`minApprovalDelta : ${option.get('minApprovalDelta')}`);
 console.log(`minRemovalDelta  : ${option.get('minRemovalDelta')}`);
 console.log(`cosignatories : (${cosignatories.length})`);
-cosignatories.forEach( cosignatory => {
+cosignatories.forEach(cosignatory => {
     console.log(`    ${cosignatory.publicKey}`);
 });
 
-TxUtil.sendMultisigTx(
-    modifiedAccount,
-    cosignatories,
+TxUtil.sendAggreagateCompleteTx(
+    cosignatories.concat([modifiedAccount]),
     [modifyMultisigAccountTx.toAggregate(modifiedAccount.publicAccount)],
     option.get('url')
 );

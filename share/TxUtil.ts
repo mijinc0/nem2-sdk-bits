@@ -8,21 +8,31 @@ export namespace TxUtil {
         announce(signedTx, url);
     }
 
-    export function sendMultisigTx(
-        initiater: nem.Account,
+    export function sendAggreagateCompleteTx(
+        cosignatories: nem.Account[],
+        innerTxs: nem.InnerTransaction[],
+        url: string
+    ): void {
+        if (cosignatories.length === 0 || innerTxs.length === 0) throw new Error("cosignatories or innerTxs or both is empty.");
+        const signedAggregateCompleteTx = createSignedAggregateCompleteTx(cosignatories, innerTxs);
+        announce(signedAggregateCompleteTx, url);
+    }
+
+    export function sendAggreagateBondedTx(
+        initiator: nem.Account,
         cosignatories: nem.Account[],
         innerTxs: nem.InnerTransaction[],
         url: string
     ): void {
         if (cosignatories.length === 0 || innerTxs.length === 0) throw new Error("cosignatories or innerTxs or both is empty.");
 
-        const signedMultisigTx = createSignedMultisigTx(initiater, innerTxs);
-        const signedLockFundsTx = createSignedLockFundsTx(initiater, signedMultisigTx);
+        const signedMultisigTx = createSignedAggregateBondedTx(initiator, innerTxs);
+        const signedLockFundsTx = createSignedLockFundsTx(initiator, signedMultisigTx);
 
         const listener = new nem.Listener(url);
         listener.open().then(() => {
 
-            listener.confirmed(initiater.address).subscribe(
+            listener.confirmed(initiator.address).subscribe(
                 tx => {
                     console.log(`tx confirmed. ${getTxInfos(tx)}`);
                     // LockFundsTx confirmed => send AggregateTx
@@ -33,13 +43,13 @@ export namespace TxUtil {
                 err => { console.error(`Error\n${err}`) }
             );
 
-            listener.aggregateBondedAdded(initiater.address).subscribe(
+            listener.aggregateBondedAdded(initiator.address).subscribe(
                 tx => { if (compareTx(tx, signedMultisigTx)) for (let k = 0; k < cosignatories.length; k++) { createAndAnnounceCosigTx(cosignatories[k], tx, url) }; },
                 err => { console.error(err); },
             );
 
             // observe removing mulsitigTx from UTCache
-            listener.aggregateBondedRemoved(initiater.address).subscribe(
+            listener.aggregateBondedRemoved(initiator.address).subscribe(
                 txHash => { console.log(`MultisigTx removed. hash:${txHash}`); },
                 err => { console.error(`Error\n${err}`); },
             );
@@ -63,17 +73,34 @@ export namespace TxUtil {
         return `type:${tx.type}, hash:${txHash}, height:${height}`
     }
 
-    function createSignedMultisigTx(initiater: nem.Account, innerTxs: nem.InnerTransaction[]): nem.SignedTransaction {
+    function createSignedAggregateCompleteTx(cosignatories: nem.Account[], innerTxs: nem.InnerTransaction[]): nem.SignedTransaction {
+        const netType = innerTxs[0].networkType;
+        const aggregateTx = nem.AggregateTransaction.createComplete(
+            nem.Deadline.create(),
+            innerTxs,
+            netType,
+            []
+        );
+        const initiator = cosignatories[0];
+        const others = cosignatories.slice(1);
+        return initiator.signTransactionWithCosignatories(
+            aggregateTx,
+            others,
+            NemConst.NEMESIS_GENERATION_HASH
+        );
+    }
+
+    function createSignedAggregateBondedTx(initiator: nem.Account, innerTxs: nem.InnerTransaction[]): nem.SignedTransaction {
         const netType = innerTxs[0].networkType;
         const aggregateTx = nem.AggregateTransaction.createBonded(
             nem.Deadline.create(),
             innerTxs,
             netType
         );
-        return initiater.sign(aggregateTx, NemConst.NEMESIS_GENERATION_HASH);
+        return initiator.sign(aggregateTx, NemConst.NEMESIS_GENERATION_HASH);
     }
 
-    function createSignedLockFundsTx(initiater: nem.Account, signedMultisigTx: nem.SignedTransaction): nem.SignedTransaction {
+    function createSignedLockFundsTx(initiator: nem.Account, signedMultisigTx: nem.SignedTransaction): nem.SignedTransaction {
         const currencyMosaicId = new nem.MosaicId(NemConst.CURRENCY_MOSAIC_ID);
         const lockedMosaic = new nem.Mosaic(currencyMosaicId, nem.UInt64.fromUint(10000000));
         const duration = nem.UInt64.fromUint(50);
@@ -85,7 +112,7 @@ export namespace TxUtil {
             signedMultisigTx,
             netType
         );
-        return initiater.sign(lockFundsTx, NemConst.NEMESIS_GENERATION_HASH);
+        return initiator.sign(lockFundsTx, NemConst.NEMESIS_GENERATION_HASH);
     }
 
     function compareTx(tx: nem.Transaction, signedTx: nem.SignedTransaction): boolean {
