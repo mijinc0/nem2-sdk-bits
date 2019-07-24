@@ -18,6 +18,9 @@ optParse.subscribePrivateKey();
 optParse.subscribe(
     'duration',
     (arg: string) => { return (/^\d*$/).test(arg) },
+    false,
+    undefined,
+    '100'
 );
 optParse.subscribe(
     'namespaceName',
@@ -30,7 +33,7 @@ const privateKey = option.get('privateKey');
 const namespaceName = option.get('namespaceName');
 
 const issuer = nem.Account.createFromPrivateKey(privateKey, netType);
-const duration = option.get('duration') ? parseInt(option.get('duration')) : 100;
+const duration = parseInt(option.get('duration'));
 
 const registerNamespaceTx = nem.RegisterNamespaceTransaction.createRootNamespace(
     nem.Deadline.create(),

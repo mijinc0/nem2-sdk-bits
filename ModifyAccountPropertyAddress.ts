@@ -6,7 +6,7 @@
 //
 //    private key : modified account private key (this script can't deal with multisig )
 //    address : target address
-//    AllowAccount | BlockAccount : PropertyType
+//    AllowAddress | BlockAddress : PropertyType
 //    Add | Remove : PropertyModificationType
 //
 //    (e.g) $ ts-node ModifyAccountPropertyAddress.ts <your private key> SDT5FPHDF37ZY5LIR3UKD2J4FMO43NQXRTY4U45E AllowAddress Add
