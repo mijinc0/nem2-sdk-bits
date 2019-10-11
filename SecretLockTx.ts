@@ -21,20 +21,20 @@ const optParse = new DefaultOptParse();
 optParse.subscribePrivateKey();
 optParse.subscribeAddress();
 optParse.subscribe(
-    `secret`,
-    (arg: string) => { return (/^-s[0-9A-Fa-f]{64}$/).test(arg) },
-    true,
-    (arg: string) => { return arg.slice(2) }
+  `secret`,
+  (arg: string) => { return (/^-s[0-9A-Fa-f]{64}$/).test(arg) },
+  true,
+  (arg: string) => { return arg.slice(2) }
 );
 optParse.subscribe(
-    'duration',
-    (arg: string) => { return (/^\d*$/).test(arg) },
+  'duration',
+  (arg: string) => { return (/^\d*$/).test(arg) },
 );
 optParse.subscribe(
-    'hashType',
-    (arg: string) => { return !(/^\d*$/).test(arg) && Object.keys(nem.HashType).includes(arg) },
-    true,
-    (arg: string) => { return `${(<any>nem.HashType)[arg]}` }
+  'hashType',
+  (arg: string) => { return !(/^\d*$/).test(arg) && Object.keys(nem.HashType).includes(arg) },
+  true,
+  (arg: string) => { return `${(<any>nem.HashType)[arg]}` }
 );
 const option = optParse.parse();
 const privateKey = option.get('privateKey');
@@ -47,13 +47,13 @@ const duration = option.get('duration') ? parseInt(option.get('duration')) : 100
 const recipient = nem.Address.createFromRawAddress(option.get('address'));;
 
 const secretLockTx = nem.SecretLockTransaction.create(
-    nem.Deadline.create(),
-    lockedMosaic,
-    nem.UInt64.fromUint(duration),
-    parseInt(option.get('hashType')),
-    option.get('secret'),
-    recipient,
-    netType
+  nem.Deadline.create(),
+  lockedMosaic,
+  nem.UInt64.fromUint(duration),
+  parseInt(option.get('hashType')),
+  option.get('secret'),
+  recipient,
+  netType
 );
 
 TxUtil.sendSinglesigTx(sender, secretLockTx, option.get('url'));

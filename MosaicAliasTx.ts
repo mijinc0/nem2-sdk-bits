@@ -20,10 +20,10 @@ const netType = NemConst.NETWORK_TYPE;
 const optParse = new DefaultOptParse();
 optParse.subscribePrivateKey();
 optParse.subscribe(
-    'aliasActionType',
+    'aliasAction',
     (arg: string) => { return arg === 'Link' || arg === 'Unlink' },
     true,
-    (arg: string) => { return `${(<any>nem.AliasActionType)[arg]}` }
+    (arg: string) => { return `${(<any>nem.AliasAction)[arg]}` }
 );
 optParse.subscribe(
     'namespaceName',
@@ -40,7 +40,7 @@ optParse.subscribe(
 const option = optParse.parse();
 
 const privateKey = option.get('privateKey');
-const aliasActionType = option.get('aliasActionType');
+const aliasAction = option.get('aliasAction');
 const namespaceName = option.get('namespaceName');
 const mosaicId = option.get('mosaicId');
 
@@ -48,7 +48,7 @@ const sender = nem.Account.createFromPrivateKey(privateKey, netType);
 
 const mosaicAliasTx = nem.MosaicAliasTransaction.create(
     nem.Deadline.create(),
-    parseInt(aliasActionType),
+    parseInt(aliasAction),
     new nem.NamespaceId(namespaceName),
     new nem.MosaicId(mosaicId),
     netType
@@ -56,7 +56,7 @@ const mosaicAliasTx = nem.MosaicAliasTransaction.create(
 
 console.log(`mosaic ID : ${mosaicId}`);
 console.log(`namespace : ${namespaceName}`);
-console.log(`   action : ${nem.AliasActionType[parseInt(aliasActionType)]}`);
+console.log(`   action : ${nem.AliasAction[parseInt(aliasAction)]}`);
 
 const url = option.get('url');
 

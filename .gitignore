@@ -4,3 +4,6 @@
 /test.ts
 
 /output/
+
+/tool/addresses.yaml
+*.txt

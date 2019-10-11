@@ -9,9 +9,9 @@ const currencyMosaicId = new nem.MosaicId(NemConst.CURRENCY_MOSAIC_ID);
 const optParse = new DefaultOptParse();
 optParse.subscribePrivateKey();
 optParse.subscribe(
-    'namespace',
-    (arg:string) => { return (/^\w+:\w+$/).test(arg) },
-    true
+  'namespace',
+  (arg: string) => { return (/^\w+:\w+$/).test(arg) },
+  true
 );
 const option = optParse.parse();
 
@@ -22,11 +22,11 @@ const namespace = option.get('namespace').split(':');
 const parentNamespaceName = namespace[0];
 const subNamespaceName = namespace[1];
 
-const registerNamespaceTx = nem.RegisterNamespaceTransaction.createSubNamespace(
-    nem.Deadline.create(),
-    subNamespaceName,
-    parentNamespaceName,
-    netType
+const registerNamespaceTx = nem.NamespaceRegistrationTransaction.createSubNamespace(
+  nem.Deadline.create(),
+  subNamespaceName,
+  parentNamespaceName,
+  netType
 );
 
 TxUtil.sendSinglesigTx(issuer, registerNamespaceTx, option.get('url'));

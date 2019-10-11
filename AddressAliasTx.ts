@@ -21,34 +21,34 @@ const optParse = new DefaultOptParse();
 optParse.subscribePrivateKey();
 optParse.subscribeAddress();
 optParse.subscribe(
-    'aliasActionType',
-    (arg: string) => { return arg === 'Link' || arg === 'Unlink' },
-    true,
-    (arg: string) => { return `${(<any>nem.AliasActionType)[arg]}` }
+  'aliasAction',
+  (arg: string) => { return arg === 'Link' || arg === 'Unlink' },
+  true,
+  (arg: string) => { return `${(<any>nem.AliasAction)[arg]}` }
 );
 optParse.subscribe(
-    'namespaceName',
-    (arg: string) => { return (/^-n\w+$/).test(arg) },
-    true,
-    (arg: string) => { return arg.slice(2) }
+  'namespaceName',
+  (arg: string) => { return (/^-n\w+$/).test(arg) },
+  true,
+  (arg: string) => { return arg.slice(2) }
 );
 const option = optParse.parse();
 
 const sender = nem.Account.createFromPrivateKey(option.get('privateKey'), netType);
 const address = nem.Address.createFromRawAddress(option.get('address'));
-const aliasActionType = option.get('aliasActionType');
+const aliasAction = option.get('aliasAction');
 const namespaceName = option.get('namespaceName');
 
 const addressAliasTx = nem.AddressAliasTransaction.create(
-    nem.Deadline.create(),
-    parseInt(aliasActionType),
-    new nem.NamespaceId(namespaceName),
-    address,
-    netType
+  nem.Deadline.create(),
+  parseInt(aliasAction),
+  new nem.NamespaceId(namespaceName),
+  address,
+  netType
 );
 
 console.log(`  address : ${address.plain()}`);
 console.log(`namespace : ${namespaceName}`);
-console.log(`   action : ${nem.AliasActionType[parseInt(aliasActionType)]}`);
+console.log(`   action : ${nem.AliasAction[parseInt(aliasAction)]}`);
 
 TxUtil.sendSinglesigTx(sender, addressAliasTx, option.get('url'));

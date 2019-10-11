@@ -52,6 +52,6 @@ export class Cli {
 
   public error( errMsg: string ) :void {
     const out = CliAttr.Color.Red + CliAttr.Style.Bold + errMsg + CliAttr.Reset;
-    console.error( errMsg );
+    console.error( out );
   }
 }

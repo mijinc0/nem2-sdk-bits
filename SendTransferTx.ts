@@ -18,19 +18,19 @@ const optParse = new DefaultOptParse();
 optParse.subscribePrivateKey();
 optParse.subscribeAddress();
 optParse.subscribe(
-    'amount',
-    (arg: string) => { return (/^\d+$/).test(arg) },
-    true
+  'amount',
+  (arg: string) => { return (/^\d+$/).test(arg) },
+  true
 );
 optParse.subscribe(
-    'mosaicId',
-    (arg: string) => { return (/^[0-9A-Fa-f]{16}$/).test(arg) }
+  'mosaicId',
+  (arg: string) => { return (/^[0-9A-Fa-f]{16}$/).test(arg) }
 );
 optParse.subscribe(
-    'message',
-    (arg: string) => { return (/^-m.+$/).test(arg) },
-    false,
-    (arg: string) => { return arg.slice(2) }
+  'message',
+  (arg: string) => { return (/^-m.+$/).test(arg) },
+  false,
+  (arg: string) => { return arg.slice(2) }
 );
 const option = optParse.parse();
 
@@ -53,11 +53,11 @@ console.log(`recipient : ${option.get('address')}`);
 console.log(`  message : ${msg}`);
 
 const transferTx = nem.TransferTransaction.create(
-    nem.Deadline.create(),
-    recipient,
-    mosaics,
-    nem.PlainMessage.create(msg),
-    netType
+  nem.Deadline.create(),
+  recipient,
+  mosaics,
+  nem.PlainMessage.create(msg),
+  netType
 );
 
 TxUtil.sendSinglesigTx(sender, transferTx, option.get('url'));

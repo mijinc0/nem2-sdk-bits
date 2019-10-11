@@ -35,7 +35,7 @@ const namespaceName = option.get('namespaceName');
 const issuer = nem.Account.createFromPrivateKey(privateKey, netType);
 const duration = parseInt(option.get('duration'));
 
-const registerNamespaceTx = nem.RegisterNamespaceTransaction.createRootNamespace(
+const registerNamespaceTx = nem.NamespaceRegistrationTransaction.createRootNamespace(
     nem.Deadline.create(),
     namespaceName,
     nem.UInt64.fromUint(duration),

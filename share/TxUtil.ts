@@ -130,7 +130,7 @@ export namespace TxUtil {
     function announceCosigTx(tx: nem.CosignatureSignedTransaction, url: string): void {
         const txHttp = new nem.TransactionHttp(url);
         txHttp.announceAggregateBondedCosignature(tx).subscribe(
-            res => console.log(`CosigTx announced cosigner:${tx.signer} , msg:${res.message}`),
+            res => console.log(`CosigTx announced cosigner:${tx.signerPublicKey} , msg:${res.message}`),
             err => console.log(`Error\n${err}`),
         );
     }

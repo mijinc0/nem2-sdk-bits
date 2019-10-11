@@ -17,28 +17,28 @@ const netType = nem.NetworkType.MIJIN_TEST;
 const optParse = new DefaultOptParse();
 optParse.subscribePrivateKey();
 optParse.subscribe(
-    'mosaicId',
-    (arg: string) => { return Util.isHex(arg) && arg.length === 16 },
-    true
+  'mosaicId',
+  (arg: string) => { return Util.isHex(arg) && arg.length === 16 },
+  true
 );
 optParse.subscribe(
-    'delta',
-    (arg: string) => { return (/^(-|\+)\d+$/).test(arg) },
-    true
+  'delta',
+  (arg: string) => { return (/^(-|\+)\d+$/).test(arg) },
+  true
 );
 const option = optParse.parse();
 
 const sender = nem.Account.createFromPrivateKey(option.get('privateKey'), netType);
 const mosaicId = new nem.MosaicId(option.get('mosaicId'));
-const modificationType = option.get('delta')[0] === '+' ? nem.MosaicSupplyType.Increase : nem.MosaicSupplyType.Decrease ;
-const delta = parseInt( option.get('delta').slice(1) );
+const changeAction = option.get('delta')[0] === '+' ? nem.MosaicSupplyChangeAction.Increase : nem.MosaicSupplyChangeAction.Decrease;
+const delta = parseInt(option.get('delta').slice(1));
 
 const mosaicSupplyChangeTx = nem.MosaicSupplyChangeTransaction.create(
-    nem.Deadline.create(),
-    mosaicId,
-    modificationType,
-    nem.UInt64.fromUint(delta),
-    netType
+  nem.Deadline.create(),
+  mosaicId,
+  changeAction,
+  nem.UInt64.fromUint(delta),
+  netType
 );
 
 TxUtil.sendSinglesigTx(sender, mosaicSupplyChangeTx, option.get('url'));
