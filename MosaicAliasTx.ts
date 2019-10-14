@@ -4,7 +4,7 @@
 //    $ ts-node MosaicAliasTx.ts <private key> <mosaic ID> <namespace name> <aliasActionType>
 //
 //          mosaic ID : '-m' + <hex mosaic ID>
-//       namespace ID : '-n' + <hex namespace name>
+//       namespace ID : '-n' + <namespace name>
 //    aliasActionType : Link or Unlink
 //
 //    $ ts-node MosaicAliasTx.ts <your private key> -m723bf76f4eeccab2 -ndragon Link

@@ -37,6 +37,10 @@ optParse.subscribe(
   'supplyMutable',
   (arg: string) => { return arg === '-s' }
 );
+optParse.subscribe(
+  'restrictable',
+  (arg: string) => { return arg === '-r' }
+);
 const option = optParse.parse();
 const privateKey = option.get('privateKey');
 const issuer = nem.Account.createFromPrivateKey(privateKey, netType);
@@ -45,11 +49,13 @@ const duration = option.get('duration') ? parseInt(option.get('duration')) : 100
 const divisibility = option.get('divisibility') ? parseInt(option.get('divisibility')) : 0;
 const supplyMutable = option.get('supplyMutable') ? true : false;
 const transferable = option.get('transferable') ? true : false;
+const restrictable = option.get('restrictable') ? true : false;
 
 // create properties //
 const mosaicFlags = nem.MosaicFlags.create(
   supplyMutable,
-  transferable
+  transferable,
+  restrictable
 );
 
 // If you want to decide nonce => nem.MosaicNonce.createFromHex( '00000000' );
@@ -76,5 +82,6 @@ console.log(`         duration : ${duration}`)
 console.log(`     divisibility : ${divisibility}`)
 console.log(`     transferable : ${transferable}`)
 console.log(`    supplyMutable : ${supplyMutable}`)
+console.log(`     restrictable : ${restrictable}`)
 
 TxUtil.sendSinglesigTx(issuer, mosaicDefTx, option.get('url'));
