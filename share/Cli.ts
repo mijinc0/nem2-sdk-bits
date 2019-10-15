@@ -5,6 +5,7 @@ export module CliAttr {
     Non = '',
     Red = '\u001b[31m',
     Green = '\u001b[32m',
+    Yellow = '\u001b[93m',
   }
 
   export enum Style {

@@ -54,20 +54,26 @@ const setAddressRestrictionIntoCli = async () => {
     console.error(e.message);
     return;
   }
+  // print restrictions
   cli.setHead('MosaicAddressRestrictionsInfo');
   addressRestrictions.forEach(addressRestriction => {
     cli.setLine(`${addressRestriction.targetAddress.plain()}`, true, CliAttr.Color.Green);
     cli.setLine(`compositeHash : ${addressRestriction.compositeHash}`);
+    cli.setLine(`     mosaicID : ${addressRestriction.mosaicId.toHex()}`);
     cli.setLine('== restrictions ==');
-    addressRestriction.restrictions.forEach((val: string, key: string)=>{
+    addressRestriction.restrictions.forEach((val: string, key: string) => {
       cli.setLine(`{ ${key}:${val} }`);
     });
   });
+  // print not found
+  const found = addressRestrictions.map(addressRestriction => addressRestriction.targetAddress.plain());
+  const notFound = rawAddresses.filter((rawAddress: string) => !found.includes(rawAddress));
+  notFound.forEach((address: string) => cli.setLine(`NOT_FOUND:${address}`, true, CliAttr.Color.Yellow));
 };
 
 const start = async () => {
   await setGlobalInfosIntoCli();
-  if(addresses) await setAddressRestrictionIntoCli();
+  if (addresses) await setAddressRestrictionIntoCli();
   cli.flush();
 };
 

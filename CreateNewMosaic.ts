@@ -4,7 +4,7 @@
 //   [ optional arguments ]
 //     duration      : decimal number (default 100)
 //     divisibility  : prefix "-d" + number (default 0)
-//     transferable  : -t (default false)
+//     transferable  : -t (default true)
 //     supplyMutable : -s (defailt false)
 //     levyMutable   : -l (defailt false)
 //
@@ -48,7 +48,7 @@ const issuer = nem.Account.createFromPrivateKey(privateKey, netType);
 const duration = option.get('duration') ? parseInt(option.get('duration')) : 100;
 const divisibility = option.get('divisibility') ? parseInt(option.get('divisibility')) : 0;
 const supplyMutable = option.get('supplyMutable') ? true : false;
-const transferable = option.get('transferable') ? true : false;
+const transferable = option.get('transferable') ? false : true;
 const restrictable = option.get('restrictable') ? true : false;
 
 // create properties //
