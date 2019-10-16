@@ -1,3 +1,9 @@
+// ** USAGE **
+//
+//      $ ts-node GetMosaicGlobalRestrictionInfo.ts <mosaicID hex> <Address1>:<Address2>...
+//
+//      (e.g.) ts-node GetMosaicRestrictionInfo.ts 747257A30CD8AA6B SB7GCOAK7GUL53FFZLPNCCYZT2RTNJCHSNW43LON:SANKOAJDMNLVMDC4HD5XSOEWHPICYE25VUUNLOWX
+
 import * as nem from 'nem2-sdk';
 import { Cli, CliAttr } from './share/Cli'
 import { NemConst } from './share/NemConst'
@@ -68,7 +74,7 @@ const setAddressRestrictionIntoCli = async () => {
   // print not found
   const found = addressRestrictions.map(addressRestriction => addressRestriction.targetAddress.plain());
   const notFound = rawAddresses.filter((rawAddress: string) => !found.includes(rawAddress));
-  notFound.forEach((address: string) => cli.setLine(`NOT_FOUND:${address}`, true, CliAttr.Color.Yellow));
+  notFound.forEach((address: string) => cli.setLine(`${address} : NOT_FOUND`, true, CliAttr.Color.Yellow));
 };
 
 const start = async () => {

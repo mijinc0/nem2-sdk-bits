@@ -53,6 +53,16 @@ const newRestriction = option.get('newRestriction').split(':');
 const newRestrictionValue = nem.UInt64.fromUint(parseInt(newRestriction[1]));
 const newRestrictionType = (<any>nem.MosaicRestrictionType)[newRestriction[0]];
 
+console.table({
+  mosaicId: mosaicId.toHex(),
+  restrictionKey: restrictionKey.toHex(),
+  prevType: previousRestriction[0],
+  prevValue: previousRestriction[1],
+  newType: newRestriction[0],
+  newValue: newRestriction[1],
+  referMosaicID: referenceMosaicId ? referenceMosaicId.toHex() : 'undefined',
+});
+
 const mosaicGlobalRestrictionTx = nem.MosaicGlobalRestrictionTransaction.create(
   nem.Deadline.create(),
   mosaicId,

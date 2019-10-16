@@ -1,5 +1,3 @@
-//TODO:SDKが未対応。まだ試せていない
-
 import * as nem from 'nem2-sdk';
 import { NemConst } from './share/NemConst'
 import { Util } from './share/Util'
@@ -45,7 +43,13 @@ const newValue = nem.UInt64.fromUint(newRawValue);
 const previousRawValue = option.get('previousValue') ? parseInt(option.get('previousValue')) : undefined;
 const previousValue = previousRawValue ? nem.UInt64.fromUint(previousRawValue) : undefined;
 
-console.log(previousValue);
+console.table({
+  targetAddress: targetAddress.plain(),
+  mosaicId: mosaicId.toHex(),
+  restrictionKey: restrictionKey.toString(),
+  newValue: newRawValue.toString(),
+  previousValue: previousValue ? previousValue.toString() : 'undefined'
+});
 
 const mosaicAddressRestrictionTx = nem.MosaicAddressRestrictionTransaction.create(
   nem.Deadline.create(),
