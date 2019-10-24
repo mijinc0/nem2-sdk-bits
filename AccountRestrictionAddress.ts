@@ -1,15 +1,9 @@
 // ** USAGE **
 //
-//    $ ts-node AccountRestrictionAddress.ts <private key> <address> <AllowAccount|BlockAccount> <Add|Remove>
+//    $ ts-node AccountRestrictionAddress.ts <private key> <address> <restrictionType> <Add|Remove>
 //
 //    ( All arguments (4 args) are required.)
 //
-//    private key : modified account private key (this script can't deal with multisig )
-//    address : target address
-//    AllowAddress | BlockAddress : PropertyType
-//    Add | Remove : PropertyModificationType
-//
-//    (e.g) $ ts-node AccountRestrictionAddress.ts <your private key> SDT5FPHDF37ZY5LIR3UKD2J4FMO43NQXRTY4U45E AllowAddress Add
 
 import * as nem from 'nem2-sdk';
 import { NemConst } from './share/NemConst'
