@@ -5,4 +5,4 @@
 
 ## sdk version
 
-nem2-sdk : ^0.14.1
+nem2-sdk : ^0.14.3
