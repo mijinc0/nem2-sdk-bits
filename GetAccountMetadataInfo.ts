@@ -17,7 +17,7 @@ const printInfo = (meta: nem.Metadata[]) => {
     console.table({
       compositeHash: entry.compositeHash,
       metadataType: `${(<any>nem.MetadataType)[entry.metadataType]}`,
-      scopedMetadataKey: entry.scopedMetadataKey.toString(),
+      scopedMetadataKey: entry.scopedMetadataKey.toHex(),
       senderPublicKey: entry.senderPublicKey,
       targetId: entry.targetId ? entry.targetId.toHex() : 'undefined',
       targetPublicKey: entry.targetPublicKey,
