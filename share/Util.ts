@@ -36,4 +36,8 @@ export module Util {
   export function isKeyFormat(s: string): boolean {
     return isHex(s) && s.length === 64;
   }
+
+  export function is64bitFormat(s: string): boolean {
+    return isHex(s) && s.length === 16;
+  }
 }
