@@ -16,10 +16,10 @@ optParse.subscribe(
   (arg: string) => { return arg.slice(12) }
 );
 optParse.subscribe(
-  'targetID',
-  (arg: string) => { return (/^--targetID=[0-9A-Fa-f]{16}$/).test(arg) },
+  'namespace',
+  (arg: string) => { return (/^--namespace=\w+$/).test(arg) },
   true,
-  (arg: string) => { return arg.slice(11) }
+  (arg: string) => { return arg.slice(12) }
 );
 optParse.subscribe(
   'scopedMetadataKey',
@@ -36,11 +36,11 @@ optParse.subscribe(
 const option = optParse.parse();
 const url = option.get('url');
 
-const getPreviousValue = async (mosaicID: nem.MosaicId, key: string, publicKey: string) => {
+const getPreviousValue = async (namespaceID: nem.NamespaceId, key: string, publicKey: string) => {
   const metadataHttp = new nem.MetadataHttp(url);
   let metadata: nem.Metadata | undefined = undefined;
   try {
-    metadata = await metadataHttp.getMosaicMetadataByKeyAndSender(mosaicID, key, publicKey).toPromise();
+    metadata = await metadataHttp.getNamespaceMetadataByKeyAndSender(namespaceID, key, publicKey).toPromise();
   } catch (e) {
     console.log('previous data is not found. add new metadata into account.');
   }
@@ -51,27 +51,27 @@ const main = async () => {
   const account = nem.Account.createFromPrivateKey(option.get('privateKey'), netType);
   const key = nem.KeyGenerator.generateUInt64Key(option.get('scopedMetadataKey'));
   const targetPublicKey = option.get('targetPublickKey');
-  const targetID = new nem.MosaicId(option.get('targetID'));
+  const namespace = new nem.NamespaceId(option.get('namespace'));
 
   const newValue = option.get('value');
-  const previousValue = await getPreviousValue(targetID, key.toHex(), account.publicAccount.publicKey);
+  const previousValue = await getPreviousValue(namespace, key.toHex(), account.publicAccount.publicKey);
 
   const deltaSet = MetadataUtil.createDeltaSet(newValue, previousValue);
   const valueDelta = deltaSet.value;
   const sizeDelta = deltaSet.size;
   console.table({
-    targetID: targetID.toHex(),
+    targetID: namespace.toHex(),
     scopedMetadataKey: key.toHex(),
     senderPublicKey: account.publicAccount.publicKey,
     previousValue: previousValue,
     newValue: newValue,
     sizeDelta: sizeDelta.toString()
   });
-  const mosaicMetadataTx = nem.MosaicMetadataTransaction.create(
+  const namespaceMetadataTx = nem.NamespaceMetadataTransaction.create(
     nem.Deadline.create(),
     targetPublicKey,
     key,
-    targetID,
+    namespace,
     sizeDelta,
     valueDelta,
     netType
@@ -83,7 +83,7 @@ const main = async () => {
   // しないと rejected transaction with type: Account_Metadata (top level not supported) として取り下げられる
   const aggregateTx = nem.AggregateTransaction.createComplete(
     nem.Deadline.create(),
-    [mosaicMetadataTx.toAggregate(account.publicAccount)],
+    [namespaceMetadataTx.toAggregate(account.publicAccount)],
     netType,
     []
   );
